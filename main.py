@@ -3,18 +3,35 @@ import numpy as np
 import tensorflow as tf
 from fastapi import FastAPI, File, UploadFile
 from PIL import Image
+from PIL import Image
+import mlflow.keras # <--- YENİ: MLflow kütüphanesi
+import os
 
+app = FastAPI(title="CIFAR-10 MLflow API")
+
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://host.docker.internal:5000")
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+
+model = None
 class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer',
                'dog', 'frog', 'horse', 'ship', 'truck']
 
-app = FastAPI(title="CIFAR-10 Görüntü Sınıflandırma API")
-
-try:
-    model = tf.keras.models.load_model('cifar10_model.h5')
-    print("Model 'cifar10_model.h5' başarıyla yüklendi.")
-except Exception as e:
-    print(f"HATA: Model yüklenemedi. {e}")
-    model = None
+@app.on_event("startup")
+def load_model():
+    global model
+    try:
+        model_name = "CIFAR10_CNN_Model"
+        model_stage = "Staging"
+        
+        print(f"MLflow'dan model indiriliyor... ({MLFLOW_TRACKING_URI})")
+        
+        model_uri = f"models:/{model_name}/{model_stage}"
+        
+        model = mlflow.keras.load_model(model_uri)
+        print(f"Model ({model_name} - {model_stage}) başarıyla yüklendi!")
+        
+    except Exception as e:
+        print(f"KRİTİK HATA: Model MLflow'dan çekilemedi. Detay: {e}")
 
 @app.get("/")
 def read_root():
