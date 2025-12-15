@@ -4,7 +4,7 @@ import tensorflow as tf
 from fastapi import FastAPI, File, UploadFile
 from PIL import Image
 from PIL import Image
-import mlflow.keras # <--- YENİ: MLflow kütüphanesi
+import mlflow.keras 
 import os
 
 app = FastAPI(title="CIFAR-10 MLflow API")
