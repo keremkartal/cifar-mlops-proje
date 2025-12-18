@@ -42,9 +42,8 @@ graph TD
 
 ```bash
 ├── .github/workflows/          # CI/CD Pipeline tanımları (GitHub Actions)
-├── manifests/                  # Kubernetes kaynak dosyaları (Deployment & Service)
-│   ├── deployment.yaml
-│   └── service.yaml
+├── deployment.yaml
+│── service.yaml
 ├── main.py                     # FastAPI Model Serving Uygulaması
 ├── train_mlflow_advanced.py    # Koşullu mantık içeren Gelişmiş Eğitim Scripti
 ├── requirements.txt            # Python bağımlılık listesi
